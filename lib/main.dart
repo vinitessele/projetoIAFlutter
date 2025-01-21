@@ -28,6 +28,7 @@ class ImageClassifierScreen extends StatefulWidget {
 class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
   File? _image;
   String? _result;
+  String? _additionalInfo;
   final ImagePicker _picker = ImagePicker();
   final String apiUrl = 'https://1ff4-177-107-116-215.ngrok-free.app/predict';
 
@@ -53,7 +54,7 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
         final responseBody = await response.stream.bytesToString();
         final jsonResponse = json.decode(responseBody);
         setState(() {
-          _result = jsonResponse['predicted_class'] ?? 'Resultado não encontrado';
+          _result = jsonResponse['predicted_class']+'-'+jsonResponse['confidence']?? 'Resultado não encontrado';
         });
       } else {
         setState(() {
