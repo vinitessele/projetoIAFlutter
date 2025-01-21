@@ -54,7 +54,9 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
         final responseBody = await response.stream.bytesToString();
         final jsonResponse = json.decode(responseBody);
         setState(() {
-          _result = jsonResponse['predicted_class']+'-'+jsonResponse['confidence']?? 'Resultado não encontrado';
+          _result = jsonResponse['predicted_class'] ?? 'Resultado não encontrado';
+          _additionalInfo = jsonResponse['confidence'] ?? 'Sem Resultado de confiança';
+          _result = '$_result - $_additionalInfo';
         });
       } else {
         setState(() {
