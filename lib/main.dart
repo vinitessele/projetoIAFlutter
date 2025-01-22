@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Image Classifier AgroStage IA',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: ImageClassifierScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
@@ -29,6 +30,8 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
   File? _image;
   String? _result;
   String? _additionalInfo;
+  double? confidencePercent;
+  bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
   final String apiUrl = 'https://1ff4-177-107-116-215.ngrok-free.app/predict';
 
@@ -38,13 +41,16 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
-        _result = null; // Limpa o resultado anterior
+        _result = null;
       });
       await _uploadImage(_image!);
     }
   }
 
   Future<void> _uploadImage(File image) async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
       request.files.add(await http.MultipartFile.fromPath('file', image.path));
@@ -54,18 +60,22 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
         final responseBody = await response.stream.bytesToString();
         final jsonResponse = json.decode(responseBody);
         setState(() {
-          _result = jsonResponse['predicted_class'] ?? 'Resultado não encontrado';
-          _additionalInfo = jsonResponse['confidence'] ?? 'Sem Resultado de confiança';
-          _result = '$_result - $_additionalInfo';
+          _result =
+              jsonResponse['predicted_class'] ?? 'Resultado não encontrado';
+          _additionalInfo = jsonResponse['confidence'] ?? 0.0;
+          confidencePercent = double.parse(_additionalInfo.toString()) * 100;
+          _isLoading = false;
         });
       } else {
         setState(() {
           _result = 'Erro: ${response.statusCode}';
+          _isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
         _result = 'Erro ao enviar a imagem: $e';
+        _isLoading = false;
       });
     }
   }
@@ -74,14 +84,42 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Classificador de Imagens'),
+        centerTitle: true,
+        title: Text(
+          'Classificador de Imagens AgroStage IA',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        backgroundColor: Colors.cyan,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Exibe a imagem selecionada
+            SizedBox(
+              width: 110,
+              height: 110,
+              child: Image(
+                image: AssetImage('images/logo1.png'),
+                fit: BoxFit.contain,
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'Estádio fenológico ?',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.cyan),
+            ),
+            Image(
+              image: AssetImage('images/soja.png'),
+            ),
             if (_image != null)
               Image.file(
                 _image!,
@@ -90,11 +128,24 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
             else
               Container(
                 height: 200,
-                color: Colors.grey[300],
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Center(child: Text('Nenhuma imagem selecionada')),
               ),
             SizedBox(height: 16),
-            // Botões para capturar ou selecionar imagem
+            SizedBox(height: 16),
+            if (_isLoading)
+              Column(
+                children: [
+                  LinearProgressIndicator(
+                    backgroundColor: Colors.grey[200],
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.cyan),
+                  ),
+                  SizedBox(height: 16),
+                ],
+              ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -112,11 +163,20 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
               ],
             ),
             SizedBox(height: 16),
-            // Exibe o resultado da API
             if (_result != null)
               Text(
                 'Resultado: $_result',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+            SizedBox(width: 16),
+            if (_result != null)
+              Text(
+                'Acurácia: ${confidencePercent?.toStringAsFixed(2)}%',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown,
+                ),
               ),
           ],
         ),
