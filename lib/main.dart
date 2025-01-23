@@ -102,20 +102,26 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              width: 110,
-              height: 110,
-              child: Image(
-                image: AssetImage('images/logo1.png'),
-                fit: BoxFit.contain,
-              ),
-            ),
+                width: 110,
+                height: 110,
+                child: Image.asset('assets/images/logo.png')),
             SizedBox(height: 16),
             Text(
-              'Estádio fenológico ?',
+              'Qual o momento de dessecar a soja? ',
               style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Colors.cyan),
+            ),
+            SizedBox(height: 16),
+            Center(
+              child: Text(
+                'O principal momento para dessecação na soja é no estágio R7.2',
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 9, 172, 193)),
+              ),
             ),
             Image(
               image: AssetImage('images/soja.png'),
