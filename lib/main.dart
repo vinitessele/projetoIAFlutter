@@ -90,101 +90,123 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black,
+            color: Colors.white,
             fontStyle: FontStyle.italic,
           ),
         ),
         backgroundColor: Colors.cyan,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'info') {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'AgroStage IA',
+                  applicationVersion: '0.1.0',
+                  applicationIcon:
+                      Icon(Icons.agriculture, size: 20, color: Colors.cyan),
+                  children: [
+                    Text('Desenvolvido por Vinicius Tessele'),
+                  ],
+                );
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  value: 'info',
+                  child: Text('Sobre'),
+                ),
+              ];
+            },
+          ),
+        ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
                 width: 110,
                 height: 110,
-                child: Image.asset('assets/images/logo.png')),
-            SizedBox(height: 16),
-            Text(
-              'Qual o momento de dessecar a soja? ',
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.cyan),
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(
-                'O principal momento para dessecação na soja é no estágio R7.2',
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 9, 172, 193)),
-              ),
-            ),
-            Image(
-              image: AssetImage('images/soja.png'),
-            ),
-            if (_image != null)
-              Image.file(
-                _image!,
-                height: 200,
-              )
-            else
-              Container(
-                height: 200,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(10),
+                child: Image(
+                  image: AssetImage('assets/images/IA.png'),
                 ),
-                child: Center(child: Text('Nenhuma imagem selecionada')),
               ),
-            SizedBox(height: 16),
-            SizedBox(height: 16),
-            if (_isLoading)
-              Column(
-                children: [
-                  LinearProgressIndicator(
-                    backgroundColor: Colors.grey[200],
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.cyan),
+              SizedBox(height: 13),
+              Center(
+                child: Text(
+                  'O  momento para dessecação na soja é no estágio R7.2',
+                  style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: const Color.fromARGB(255, 9, 172, 193)),
+                ),
+              ),
+              Image(
+                image: AssetImage('assets/images/soja.png'),
+              ),
+              SizedBox(height: 10),
+              if (_image != null)
+                Image.file(
+                  _image!,
+                  height: 200,
+                )
+              else
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  SizedBox(height: 16),
+                  child: Center(child: Text('Nenhuma imagem selecionada')),
+                ),
+              SizedBox(height: 10),
+              if (_isLoading)
+                Column(
+                  children: [
+                    LinearProgressIndicator(
+                      backgroundColor: Colors.grey[200],
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.cyan),
+                    ),
+                    SizedBox(height: 10),
+                  ],
+                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () => _pickImage(ImageSource.camera),
+                    icon: Icon(Icons.camera_alt),
+                    label: Text('Câmera'),
+                  ),
+                  SizedBox(width: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => _pickImage(ImageSource.gallery),
+                    icon: Icon(Icons.photo),
+                    label: Text('Galeria'),
+                  ),
                 ],
               ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton.icon(
-                  onPressed: () => _pickImage(ImageSource.camera),
-                  icon: Icon(Icons.camera_alt),
-                  label: Text('Câmera'),
+              SizedBox(height: 10),
+              if (_result != null)
+                Text(
+                  'Resultado: $_result',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 16),
-                ElevatedButton.icon(
-                  onPressed: () => _pickImage(ImageSource.gallery),
-                  icon: Icon(Icons.photo),
-                  label: Text('Galeria'),
+              if (_result != null)
+                Text(
+                  'Acurácia: ${confidencePercent?.toStringAsFixed(2)}%',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.brown,
+                  ),
                 ),
-              ],
-            ),
-            SizedBox(height: 16),
-            if (_result != null)
-              Text(
-                'Resultado: $_result',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            SizedBox(width: 16),
-            if (_result != null)
-              Text(
-                'Acurácia: ${confidencePercent?.toStringAsFixed(2)}%',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.brown,
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
