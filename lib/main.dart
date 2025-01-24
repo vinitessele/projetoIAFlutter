@@ -33,7 +33,7 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
   double? confidencePercent;
   bool _isLoading = false;
   final ImagePicker _picker = ImagePicker();
-  final String apiUrl = 'https://1ff4-177-107-116-215.ngrok-free.app/predict';
+  final String apiUrl = 'https://4d37-177-107-116-215.ngrok-free.app/predict';
 
   Future<void> _pickImage(ImageSource source) async {
     final pickedFile = await _picker.pickImage(source: source);
@@ -94,7 +94,7 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
             fontStyle: FontStyle.italic,
           ),
         ),
-        backgroundColor: Colors.cyan,
+        backgroundColor: const Color.fromARGB(255, 5, 96, 108),
         actions: [
           PopupMenuButton<String>(
             onSelected: (value) {
@@ -135,14 +135,14 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
                   image: AssetImage('assets/images/IA.png'),
                 ),
               ),
-              SizedBox(height: 13),
+              SizedBox(height: 14),
               Center(
                 child: Text(
                   'O  momento para dessecação na soja é no estágio R7.2',
                   style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 9, 172, 193)),
+                      color: const Color.fromARGB(255, 5, 96, 108)),
                 ),
               ),
               Image(
@@ -181,12 +181,20 @@ class _ImageClassifierScreenState extends State<ImageClassifierScreen> {
                     onPressed: () => _pickImage(ImageSource.camera),
                     icon: Icon(Icons.camera_alt),
                     label: Text('Câmera'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 5, 96, 108),
+                      foregroundColor: const Color.fromARGB(255, 255, 255, 255),
+                    ),
                   ),
                   SizedBox(width: 16),
                   ElevatedButton.icon(
                     onPressed: () => _pickImage(ImageSource.gallery),
                     icon: Icon(Icons.photo),
                     label: Text('Galeria'),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 5, 96, 108),
+                        foregroundColor:
+                            const Color.fromARGB(255, 255, 255, 255)),
                   ),
                 ],
               ),
